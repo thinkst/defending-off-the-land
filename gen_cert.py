@@ -1,9 +1,10 @@
+#!/usr/bin/env python3
 # Script to generate tokened certificate for RDP token
 # (C) 2024 Thinkst Applied Research, PTY
 # Author: Jacob Torrey
 
 from typing import Optional
-import crypto_helper
+import crypto_helper, sys
 
 REG_TEMPLATE = """Windows Registry Editor Version 5.00
 
@@ -31,3 +32,15 @@ def generate_reg_file(digest : str, filename):
     reg = REG_TEMPLATE.format(thumbprint=encoded_dgt)
     with open(filename, 'w') as fp:
         fp.write(reg)
+
+if __name__ == '__main__':
+    print("This script will generate a tokened certificate for use in the RDP token")
+    token_url = str(input("Please enter the URL for the token: "))
+    if token_url == '':
+        print("A token URL is required.")
+        sys.exit()
+    cname = str(input("Please provide the computer name that will be tokened (or nothing to use the default): "))
+    if cname == '':
+        cname = 'Microsoft Windows'
+    print(f"Generating a certificate (token.p12 & token.reg) for {cname} that is tokened to point to {token_url}")
+    generate_bundle(token_url=token_url, name=cname)
