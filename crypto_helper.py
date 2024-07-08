@@ -3,7 +3,7 @@
 # Author: Jacob Torrey
 
 import datetime
-from cryptography.hazmat.primitives.asymmetric import ec
+from cryptography.hazmat.primitives.asymmetric import rsa
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.serialization import BestAvailableEncryption, pkcs12
 from cryptography.x509.oid import NameOID
@@ -32,11 +32,11 @@ def export_p12(key, cert, filename : str = 'cert.p12'):
     with open(filename, 'wb') as fp:
         fp.write(pkcs12.serialize_key_and_certificates(b'tokencert', key, cert, None, BestAvailableEncryption(b'password')))
 
-def generate_cert(token_url : str, org_name : str = 'Thinkst', computer_name : str = 'Microsoft Windows') -> tuple[ec.EllipticCurvePrivateKey, x509.Certificate]:
+def generate_cert(token_url : str, org_name : str = 'Thinkst', computer_name : str = 'Microsoft Windows') -> tuple[rsa.RSAPrivateKey, x509.Certificate]:
     '''
     Generates a tokened key and certificate with token_url as the CRL distribution point
     '''
-    token_cert_key = ec.generate_private_key(ec.SECP256R1())
+    token_cert_key = rsa.generate_private_key(public_exponent=65537, key_size=2048)
     root_key, root_cert = _generate_root_ca(org_name=org_name)
 
     subject = x509.Name([
@@ -82,12 +82,12 @@ def _generate_aia(token_url : str) -> x509.AuthorityInformationAccess:
     aia = x509.AccessDescription(am, al)
     return x509.AuthorityInformationAccess([aia])
 
-def _generate_root_ca(org_name : str) -> tuple[ec.EllipticCurvePrivateKey, x509.Certificate]:
+def _generate_root_ca(org_name : str) -> tuple[rsa.RSAPrivateKey, x509.Certificate]:
     '''
     Generates a root CA to sign the leaf cert with
     Returns a tuple (root_key, root_cert)
     '''
-    root_key = ec.generate_private_key(ec.SECP256R1())
+    root_key = rsa.generate_private_key(public_exponent=65537, key_size=2048)
 
     subject = x509.Name([
         x509.NameAttribute(NameOID.COUNTRY_NAME, 'ZA'),
