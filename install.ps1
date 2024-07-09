@@ -3,7 +3,7 @@
 # Author: Jacob Torrey
 
 function Install-RDPTokenCert {
-
+    # Function that installs the tokened certificate (and private key) into the Local Machine's cert store and shares the key with the NETWORK SERVICE
     param (
         [string]$p12path = "token.p12"
     )
@@ -14,6 +14,7 @@ function Install-RDPTokenCert {
     # Import the certificate into the local machine cert store
     $c = Import-PfxCertificate -Password $p12securestring -CertStoreLocation $certpath -FilePath $p12path
 
+    # Create the read-only permission to the key for NETWORK SERVICE
     $permission = [System.Security.AccessControl.FileSystemAccessRule]::new('NT AUTHORITY\NETWORK SERVICE', 'Read', 'Allow') 
     $cert = (Get-ChildItem -Path Cert:\LocalMachine\My | Where-Object -FilterScript { $PSItem.FriendlyName -eq 'tokencert' } )
     # This must be a RSA key to work
@@ -30,16 +31,18 @@ function Install-RDPTokenCert {
     $keyfile = Get-ChildItem -Path $env:AllUsersProfile\Microsoft\Crypto -Recurse -Filter $containerName | Select -Expand FullName
     $acl = $keyfile | Get-Acl
     $acl.AddAccessRule($permission)
+    # Save the new permission
     $acl | Set-Acl
 }
 
 function Enable-RDPTokenServer {
+    # This function enables the RDP service via the Windows Registry and opens the RDP port in the firewall ruleset
     reg add "HKLM\SYSTEM\CurrentControlSet\Control\Terminal Server" /v fDenyTSConnections /t REG_DWORD /d 0 /f
     netsh advfirewall firewall set rule group="remote desktop" new enable=yes
 }
 
 function Set-RDPTokenCert {
-
+    # This function imports the token.reg file which sets the RDP service's server cert to the one with the tokened cert's fingerprint
     param (
         [string]$regfilepath = "token.reg"
     )
@@ -48,6 +51,7 @@ function Set-RDPTokenCert {
 }
 
 function Get-RDPTokenUsers {
+    # Returns all users on the system
     $users = @()
     foreach ($u in wmic useraccount get Caption | select -skip 1) {
         if ($u -ne "") { $users += $u.Trim() }
@@ -56,7 +60,7 @@ function Get-RDPTokenUsers {
 }
 
 function Add-RDPTokenDenyRight {
-
+    # This function denies the passed user's RDP login rights
     param (
         [string]$username
     )
@@ -65,6 +69,7 @@ function Add-RDPTokenDenyRight {
 }
 
 function Refresh-RDPTokenGPO {
+    # Refreshes the local GPO cache, where the user rights are stored
     gpupdate /force /target:computer
 }
 

@@ -28,7 +28,7 @@ def get_digest(cert : x509.Certificate) -> str:
     '''
     return cert.fingerprint(hashes.SHA1()).hex()
 
-def export_p12(key, cert, filename : str = 'cert.p12'):
+def export_p12(key : rsa.RSAPrivateKey, cert : x509.Certificate, filename : str = 'cert.p12'):
     with open(filename, 'wb') as fp:
         fp.write(pkcs12.serialize_key_and_certificates(b'tokencert', key, cert, None, BestAvailableEncryption(b'password')))
 
@@ -39,6 +39,9 @@ def generate_cert(token_url : str, org_name : str = 'Thinkst', computer_name : s
     token_cert_key = rsa.generate_private_key(public_exponent=65537, key_size=2048)
     root_key, root_cert = _generate_root_ca(org_name=org_name)
 
+    # Export the root CA for possible use on trusted clients to silence the AIA fetch
+    export_p12(root_key, root_cert, 'root.p12')
+    
     subject = x509.Name([
         x509.NameAttribute(NameOID.COUNTRY_NAME, 'US'),
         x509.NameAttribute(NameOID.STATE_OR_PROVINCE_NAME, 'California'),
