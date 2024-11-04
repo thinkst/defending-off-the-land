@@ -64,5 +64,5 @@ Write "Setting the WinRM service to use that certificate"
 Write "Disabling WinRM access for all users"
 Add-WinRMTokenDenyRight
 Write "Enabling WinRM service"
-Enable-RDPTokenServer
+Enable-WinRMTokenServer
 Remove-WinRMRootCert
