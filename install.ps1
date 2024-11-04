@@ -82,7 +82,7 @@ Write "This script will install the RDP Canarytoken to your system"
 Write "It will:"
 Write " - Install a tokened certificate into your certificate store"
 Write " - Configure the RDP service to use that certificate for RDP connections"
-Write " - Disable RDP logins for all users"
+Write " - Confirm if you want to disable RDP logins for all users"
 Write " - Enable the RDP service and open the RDP port on the local firewall"
 
 $ptitle = 'Install RDP Canarytoken'
@@ -100,10 +100,16 @@ Write "Installing the certificate..."
 Install-RDPTokenCert
 Write "Setting the RDP service to use that certificate"
 Set-RDPTokenCert
-Write "Disabling RDP access for all users"
-foreach ($u in Get-RDPTokenUsers) {
-    Add-RDPTokenDenyRight($u)
+
+$continue = $Host.UI.PromptForChoice("Disable RDP access for all users", "This will prevent any non-local logins, skip this for VMs or cloud-based systems", $pcs, 1)
+
+if ($continue -eq 1) {
+    Write "Disabling RDP access for all users"
+    foreach ($u in Get-RDPTokenUsers) {
+        Add-RDPTokenDenyRight($u)
+    }
 }
+
 Refresh-RDPTokenGPO
 Write "Enabling RDP service"
 Enable-RDPTokenServer
