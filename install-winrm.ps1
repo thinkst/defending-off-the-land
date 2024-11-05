@@ -26,12 +26,27 @@ function Remove-WinRMRootCert {
 
 function Enable-WinRMTokenServer {
     # This function enables the RDP service via the Windows Registry and opens the RDP port in the firewall ruleset
-    winrm qc -q -transport:https
+    $netconn = Get-NetConnectionProfile
+    $reset = 0
+    if ($netconn.NetworkCategory -eq "Public") {
+        $reset = 1
+        Set-NetConnectionProfile -InterfaceAlias $netconn.InterfaceAlias -NetworkCategory "Private"       
+    }
+    winrm qc -q
+    $hostname = hostname
+    $tp = (ls Cert:\LocalMachine\My | Where-Object {$_.Subject -match $hostname}).Thumbprint
+    WinRM create winrm/config/Listener?Address=*+Transport=HTTPS "@{Hostname=""$hostname""; CertificateThumbprint=""$tp""}"
+    WinRM delete winrm/config/Listener?Address=*+Transport=HTTP
+    Add-WinRMTokenDenyRight
     netsh advfirewall firewall add rule name="winRM HTTPS" dir=in action=allow protocol=TCP localport=5986
+    if ($reset.NetworkCategory -eq 1) {
+        Set-NetConnectionProfile -InterfaceAlias $netconn.InterfaceAlias -NetworkCategory "Public"       
+    }
 }
 
 function Add-WinRMTokenDenyRight {
     # This function puts in a SDDL that denies all users access
+    Write "Disabling WinRM access for all users"
     winrm set winrm/config/service '@{RootSDDL = "O:NSG:BAD:P(D;;GA;;;BA)(D;;GAGR;;;IU)S:P(AU;FA;GA;;;WD)(AU;SA;GXGW;;;WD)"}'
 }
 
@@ -61,8 +76,6 @@ if ($continue -eq 1) {
 Write "Installing the certificate..."
 Install-WinRMTokenCert
 Write "Setting the WinRM service to use that certificate"
-Write "Disabling WinRM access for all users"
-Add-WinRMTokenDenyRight
 Write "Enabling WinRM service"
 Enable-WinRMTokenServer
 Remove-WinRMRootCert
