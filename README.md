@@ -1,3 +1,15 @@
+# Windows tokens for defending off the land
+
+This repository contains a number of scripts for creating and deploying extent Windows OS features in non-traditional ways.
+With these scripts your Windows systems that you may not be allowed to install or deploy agents to can provide additional 
+visibility for suspicious behavior.
+
+The capabilities include:
+- RDP Canarytoken - This script configures the RDP service to listen for logins and serve a certificate that triggers an alert from the would-be attacker's machine
+- WinRM Canarytoken - This script configures the WinRM service to listen on HTTPS (port 5986) certificate that triggers an alert from the would-be attacker's machine
+- Scheduled Task alerter - This script installs a scheduled task that monitors for other scheduled tasks that are suspicious, and alerts on their creation
+
+
 ### RDP Canarytoken
 
 This is a prototype token for Windows endpoints that, without installing any agent or software:
@@ -48,3 +60,14 @@ The `gen_cert.py` script generates a certificate with a self-signed CA that has 
 The `install-winrm.ps1` script installs the generated certificate, as well as disables WinRM logins for all users, and finally enables the HTTPS WinRM service with the tokened certificate as the served certificate.
 
 It must be run as an Administrator.
+
+### Scheduled Task Alerter
+
+This script creates a new scheduled task that alerts if any other scheduled tasks are created that:
+- Run a suspicious command: `powershell.exe`, `cmd.exe`, `*.bat`
+- Run a program that is writable by the user (to filter out legitimate tasks)
+- Operate on user-writable paths
+
+#### Installer script
+
+Run `schedtask.ps1` as admin with a web bug Canarytoken URL as an argument. This will enable Object Audit Logging, create a task that is triggered by new scheduled tasks that alerts to that web URL. It sets the User-Agent to the discovered task name for easier analysis.
