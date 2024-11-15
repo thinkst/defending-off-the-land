@@ -87,6 +87,36 @@ function Test-Dir {
     (Get-Acl $dir | Select-Object -ExpandProperty Access | Where-Object {($_.identityreference -eq [System.Security.Principal.WindowsIdentity]::GetCurrent().Name) -or ($_.identityreference -eq 'BUILTIN\Users')} | Select-Object FileSystemRights | Where-Object {($_.FileSystemRights -eq 'FullControl') -or ($_.FileSystemRights -contains 'Write')}) -ne $null
 }
 
+function Show-BalloonNotification {
+    param (
+        [Parameter(Mandatory=$true)]
+        [string]$Title,
+        [Parameter(Mandatory=$true)]
+        [string]$Message
+    )
+    $Duration = 2000
+    # Load required assemblies
+    Add-Type -AssemblyName System.Windows.Forms
+    Add-Type -AssemblyName System.Drawing
+    
+    # Create NotifyIcon object
+    $balloon = New-Object System.Windows.Forms.NotifyIcon
+    $balloon.Icon = [System.Drawing.SystemIcons]::Warning
+    $balloon.BalloonTipIcon = [System.Windows.Forms.ToolTipIcon]::Warning
+
+    # Configure notification
+    $balloon.BalloonTipTitle = $Title
+    $balloon.BalloonTipText = $Message
+    $balloon.Visible = $true
+    
+    # Show notification
+    $balloon.ShowBalloonTip($Duration)
+    
+    # Clean up after duration
+    Start-Sleep -Milliseconds $Duration
+    $balloon.Dispose()
+}
+
 function Extract-Dir {
     param ([string] $str)
     if ($str -match '((?:[a-zA-Z]:\\)(?:[-\u4e00-\u9fa5\w\s.()~!@#$%^()\[\]{}+=]+\\)*)') {
@@ -136,6 +166,7 @@ if ($tn -eq '[TASKNAME]') {
     Exit 0
 }
 if (Get-Actions -Xmls (Get-TaskXML $tn)) {
+    Show-BalloonNotification -Title 'Suspicious Scheduled Task Created' -Message ('A task named ' + $tn + ' was created that appears suspicious')
     Invoke-WebRequest -Uri '[TOKENURI]' -UserAgent $tn
 }
 '@
