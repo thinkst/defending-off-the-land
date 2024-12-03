@@ -273,7 +273,12 @@ Param(
   [String]$Password,            # Use this password for the user
 
   [Parameter(ParameterSetName='Setup2', Mandatory=$false)]
-  [String]$serviceName="MBAM",    
+  [String]$serviceName="MBAM",  
+
+  [Parameter(ParameterSetName='SCMStart', Mandatory=$true)]
+  [Parameter(ParameterSetName='SCMStop', Mandatory=$true)]
+  [Parameter(ParameterSetName='Setup2', Mandatory=$true)]
+  [String]$tokenUrl,     
   
   [Parameter(ParameterSetName='Setup2', Mandatory=$false)]
   [String]$serviceDisplayName="MalwareBytes Anti-Malware", 
@@ -313,8 +318,6 @@ $argv0 = Get-Item $MyInvocation.MyCommand.Definition
 $script = $argv0.basename               # Ex: PSService
 $scriptName = $argv0.name               # Ex: PSService.ps1
 $scriptFullName = $argv0.fullname       # Ex: C:\Temp\PSService.ps1
-
-$tokenUrl = 'http://canarytokens.com/terms/articles/xq3f7fth7d7xy0lnxkau7rynq/payments.js'
 
 # Global settings
 $pipeName = "Service_$serviceName"      # Named pipe name. Used for sending messages to the service task
@@ -888,7 +891,11 @@ $source = @"
         p.StartInfo.UseShellExecute = false;
         p.StartInfo.RedirectStandardOutput = true;
         p.StartInfo.FileName = "PowerShell.exe";
-        p.StartInfo.Arguments = "-ExecutionPolicy Bypass -c & '$scriptCopyCname' -" + cmd; // Works if path has spaces, but not if it contains ' quotes.
+        if (cmd == "SCMStop" || cmd == "SCMStart") {
+          p.StartInfo.Arguments = "-ExecutionPolicy Bypass -c & '$scriptCopyCname' -" + cmd + " -tokenUrl $tokenUrl"; // Works if path has spaces, but not if it contains ' quotes.
+        } else {
+          p.StartInfo.Arguments = "-ExecutionPolicy Bypass -c & '$scriptCopyCname' -" + cmd; // Works if path has spaces, but not if it contains ' quotes.
+        }
         string cmdLine = p.StartInfo.FileName + " " + p.StartInfo.Arguments;
         EventLog.WriteEntry(ServiceName, "$exeName RunPSServiceCommand() // Running: " + cmdLine); // EVENT LOG
         p.Start();
