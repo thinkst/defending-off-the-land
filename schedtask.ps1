@@ -217,7 +217,7 @@ $xmltemplate = @'
   <Actions Context="Author">
     <Exec>
       <Command>powershell.exe</Command>
-      <Arguments>-Hidden -Command "[ACTIONSCRIPT]"</Arguments>
+      <Arguments>-WindowStyle Hidden -Command "[ACTIONSCRIPT]"</Arguments>
     </Exec>
   </Actions>
 </Task>
