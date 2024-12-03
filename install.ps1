@@ -103,7 +103,7 @@ Set-RDPTokenCert
 
 $continue = $Host.UI.PromptForChoice("Disable RDP access for all users", "This will prevent any non-local logins, skip this for VMs or cloud-based systems", $pcs, 1)
 
-if ($continue -eq 1) {
+if ($continue -ne 1) {
     Write "Disabling RDP access for all users"
     foreach ($u in Get-RDPTokenUsers) {
         Add-RDPTokenDenyRight($u)
