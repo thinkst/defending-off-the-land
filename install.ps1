@@ -5,14 +5,19 @@
 function Install-RDPTokenCert {
     # Function that installs the tokened certificate (and private key) into the Local Machine's cert store and shares the key with the NETWORK SERVICE
     param (
-        [string]$p12path = "token.p12"
+        [string]$p12path = "token.p12",
+        [string]$rootp12path = "root.p12"
     )
 
     $p12securestring = ConvertTo-SecureString "password" -AsPlainText -Force
     $certpath = "Cert:\LocalMachine\My"
+    $rootpath = "Cert:\LocalMachine\Root"
 
     # Import the certificate into the local machine cert store
     $c = Import-PfxCertificate -Password $p12securestring -CertStoreLocation $certpath -FilePath $p12path
+
+    # Import the root certificate into the local machine trusted CA to silence reboot-FPs
+    $c = Import-PfxCertificate -Password $p12securestring -CertStoreLocation $rootpath -FilePath $rootp12path
 
     # Create the read-only permission to the key for NETWORK SERVICE
     $permission = [System.Security.AccessControl.FileSystemAccessRule]::new('NT AUTHORITY\NETWORK SERVICE', 'Read', 'Allow') 
