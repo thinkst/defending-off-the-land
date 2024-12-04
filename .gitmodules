@@ -1,0 +1,3 @@
+[submodule "registry_monitor/rules"]
+	path = registry_monitor/rules
+	url = https://github.com/elastic/detection-rules.git
