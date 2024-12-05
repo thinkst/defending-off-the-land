@@ -81,7 +81,7 @@ function Install-Task {
 
 $actionScript = @'
 $tn = '$(TaskName)'.SubString(1)
-$suspiciousCommands = @('powershell.exe', 'cmd.exe', '.bat')
+$suspiciousCommands = @('powershell.exe', 'cmd.exe', '.bat', 'mshta.exe')
 function Test-Dir {
     param ([string]$dir)
     (Get-Acl $dir | Select-Object -ExpandProperty Access | Where-Object {($_.identityreference -eq [System.Security.Principal.WindowsIdentity]::GetCurrent().Name) -or ($_.identityreference -eq 'BUILTIN\Users')} | Select-Object FileSystemRights | Where-Object {($_.FileSystemRights -eq 'FullControl') -or ($_.FileSystemRights -contains 'Write')}) -ne $null
