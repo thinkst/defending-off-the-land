@@ -8,6 +8,8 @@ The capabilities include:
 - RDP Canarytoken - This script configures the RDP service to listen for logins and serve a certificate that triggers an alert from the would-be attacker's machine
 - WinRM Canarytoken - This script configures the WinRM service to listen on HTTPS (port 5986) certificate that triggers an alert from the would-be attacker's machine
 - Scheduled Task alerter - This script installs a scheduled task that monitors for other scheduled tasks that are suspicious, and alerts on their creation
+- Windows Registry Monitor - This script (which can be installed as a periodic task) monitors ~80 sensitive Registry keys and alerts on their change
+- Windows Service Canarytoken - This script registers itself as a Windows Service that appears to be a defensive application (e.g., MalwareBytes). If the Service is ever stopped, it alerts.
 
 
 ### RDP Canarytoken
