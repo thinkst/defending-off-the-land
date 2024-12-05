@@ -55,7 +55,7 @@ In essence, this token reconfigures Windows to expose the WinRM (HTTPS) service 
 
 The Windows CryptoAPI will try to validate certificates, even if they are not rooted in a trusted CA. This means that the AIA flag for a certificate will cause the CryptoAPI to browse to the URL in the flag---triggering the token.
 
-The `gen_cert.py` script generates a certificate with a self-signed CA that has the token URL as the AIA parameter (`token.p12`). The script also outputs that certificate as a `.p12` archive with the password of "password". 
+The `gen_cert.py` script generates a certificate with a self-signed CA that has the token URL as the AIA parameter (`token.p12` and `root.p12`). The script also outputs that certificate as a `.p12` archive with the password of "password". The fingerprint of this certificate is embedded into `token.reg` which is used to configure the OS to serve that certificate.
 
 #### Installer script
 
