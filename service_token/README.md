@@ -19,3 +19,7 @@ As noted in the [MITRE ATT&CK T1489](https://attack.mitre.org/techniques/T1489/)
 discovered defensive services, including anti-malware engines and backup tools. As a post-exploitation technique, it makes sense to disable
 those services before bringing other payloads onto the compromised host. This Canarytoken service appears to be a defensive service, but alerts
 when stopped.
+
+## Credits
+
+Adapted from: https://github.com/JFLarvoire/SysToolsLib/blob/master/PowerShell/PSService.ps1
