@@ -14,7 +14,7 @@ using System.Diagnostics;
 
 
 /*
-.\CanaryFS.exe C:\vfstest $(Get-Content .\csharp\test_file.csv -Raw) example.canarytokens.com true SecretFilesHere
+.\CanaryFS.exe C:\vfstest $(Get-Content .\test_file.csv -Raw) example.canarytokens.com true SecretFilesHere
 */
 
 namespace ProjectedFileSystemProvider
