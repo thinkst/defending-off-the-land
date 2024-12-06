@@ -1,0 +1,11 @@
+[Unit]
+Description=OpenCanary Hyper-V Manager
+After=network.target
+
+[Service]
+ExecStart=/usr/bin/python3 /root/oc_manager.py
+WorkingDirectory=/root
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

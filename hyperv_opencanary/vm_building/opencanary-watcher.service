@@ -1,0 +1,9 @@
+[Unit]
+Description=OpenCanary Hyper-V Manager Restarter
+After=network.target
+StartLimitIntervalSec=10
+StartLimitBurst=5
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/systemctl restart opencanary

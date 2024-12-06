@@ -1,0 +1,7 @@
+# Needs systemctl enable opencanary-watcher.path; systemctl start opencanary-watcher.path
+[Path]
+Unit=opencanary-watcher.service
+PathChanged=/var/lib/hyperv/.kvp_pool_0
+
+[Install]
+WantedBy=multi-user.target
