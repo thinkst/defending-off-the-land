@@ -11,3 +11,4 @@ The capabilities include:
 - Windows Registry Monitor (`registry_monitor`) - This script (which can be installed as a periodic task) monitors ~80 sensitive Registry keys and alerts on their change
 - Windows Service Canarytoken (`service_token`) - This script registers itself as a Windows Service that appears to be a defensive application (e.g., MalwareBytes). If the Service is ever stopped, it alerts.
 - Windows Projected File System (`file_access_token`) - These scripts show examples of Windows ProjFS, SMB Share, TarPit extended examples.
+- OpenCanary Honeypot (`hyperv_openvanary`) - Scripts to run an OpenCanary VM under Hyper-V, and NAT your machine's public ports to the honeypot.
