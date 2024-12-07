@@ -221,7 +221,6 @@ $xmlContent = @"
 </Task>
 "@
 
-Set-Content -Path "File.txt" -Value $xmlContent
 # Register the task from the XML string
 Write-Host "Creating scheduled task '$taskName' from XML..."
 $taskResult = Register-ScheduledTask -Xml $xmlContent -TaskName $taskName -Force
