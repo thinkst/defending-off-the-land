@@ -8,7 +8,8 @@ The capabilities include:
 - RDP Canarytoken (`rdp_winrm`) - This script configures the RDP service to listen for logins and serve a certificate that triggers an alert from the would-be attacker's machine
 - WinRM Canarytoken (`rdp_winrm`) - This script configures the WinRM service to listen on HTTPS (port 5986) certificate that triggers an alert from the would-be attacker's machine
 - Scheduled Task alerter (`task_token`) - This script installs a scheduled task that monitors for other scheduled tasks that are suspicious, and alerts on their creation
+- AD login alerter (`ad_login_token`) - This script installs a scheduled task that monitors for authentication attempts of fake honeyusers in an AD environment
 - Windows Registry Monitor (`registry_monitor`) - This script (which can be installed as a periodic task) monitors ~80 sensitive Registry keys and alerts on their change
 - Windows Service Canarytoken (`service_token`) - This script registers itself as a Windows Service that appears to be a defensive application (e.g., MalwareBytes). If the Service is ever stopped, it alerts.
 - Windows Projected File System (`file_access_token`) - These scripts show examples of Windows ProjFS, SMB Share, TarPit extended examples.
-- OpenCanary Honeypot (`hyperv_openvanary`) - Scripts to run an OpenCanary VM under Hyper-V, and NAT your machine's public ports to the honeypot.
+- OpenCanary Honeypot (`hyperv_opencanary`) - Scripts to run an OpenCanary VM under Hyper-V, and NAT your machine's public ports to the honeypot.
