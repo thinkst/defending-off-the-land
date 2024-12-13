@@ -15,5 +15,6 @@ Sample Invocation.
 
 Sample exe invocation
 .\CanaryFS.exe C:\vfstest $(Get-Content .\csharp\test_file.csv -Raw) example.canarytokens.com true
+
 ```
 
